@@ -1,66 +1,72 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🎓 ScholarSphere  
+**Connect, Debate, Learn; Unleash Scholarly Excellence**
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+## 🌐 Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**ScholarSphere** is a modern academic collaboration platform that connects scholars and thinkers from around the world.  
+It allows users to **create posts, engage in debates, share knowledge, and use AI-powered tools like text summarization** to enhance research productivity.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Originally developed as a **Final Year Project (FYP)**, ScholarSphere represents a step toward building a professional scholarly community platform.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ✨ Key Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- 🏠 **Home Page** — Displays latest posts and discussions  
+- 🗣️ **Post Creation** — Share ideas, theories, or debate topics  
+- 👤 **Profile Creation** — Create your scholarly profile with bio and links  
+- 📋 **Profile Index** — Browse other scholars’ profiles  
+- 🧠 **AI Summarizer** — Summarize long research text using Flask + Transformers  
+- 📚 **E-Library** — Access academic content and resources  
+- 🔐 **Authentication** — Secure register and login pages  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
+## 🖼️ Screenshots
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Page | Preview |
+|------|----------|
+| 🏠 Home Page | ![Home Page](public/Screenshots/HomePage1.png) |
+| 🗣️ Posts | ![Posts](public/Screenshots/PostPage.png) |
+| 📋 Profile Index | ![Profile Index](public/Screenshots/IndexPage.png) |
+| 🔐 Login & Register | ![Login](public/Screenshots/AuthPage.png) |
+| 📚 E-Library | ![E-Library](public/Screenshots/elibraryPage.png) |
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## ⚙️ Tech Stack
 
-### Premium Partners
+| Layer | Technology |
+|:------|:------------|
+| Backend | **Laravel 9.52 (PHP 8)** |
+| Frontend | **Blade Templates + Bootstrap 5.3** |
+| AI Service | **Flask (Python) + Hugging Face Transformers** |
+| Database | **MySQL** |
+| Styling | **Vintage-inspired UI with custom CSS** |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+---
 
-## Contributing
+## 🧠 Flask Summarization Service
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+ScholarSphere integrates a Flask API that uses the **DistilBART** model from Hugging Face to generate concise summaries.
 
-## Code of Conduct
+### `app.py`
+```python
+from flask import Flask, request, jsonify
+from transformers import pipeline
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+app = Flask(__name__)
 
-## Security Vulnerabilities
+summarizer = pipeline('summarization', model='sshleifer/distilbart-cnn-12-6')
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+@app.route('/summarize', methods=['POST'])
+def summarize():
+    data = request.json
+    text = data.get('text', '')
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+    summary = summarizer(text, max_length=150, min_length=50, do_sample=False)
+    return jsonify({"summary": summary[0]['summary_text']})
+         
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=5052, debug=True)
